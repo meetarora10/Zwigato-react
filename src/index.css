@@ -1,0 +1,8 @@
+body{
+    color: whitesmoke;
+    font-family: "Protest Guerrilla", sans-serif;
+}
+#carousel{
+    max-height: 500px;
+    object-fit: contain !important;
+}
