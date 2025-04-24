@@ -1,6 +1,9 @@
+@import "tailwindcss";
 body{
     color: whitesmoke;
-    font-family: "Protest Guerrilla", sans-serif;
+    /* font-family: "Protest Guerrilla", sans-serif; */
+    /* font-family: "Bebas Neue", sans-serif; */
+    font-family: 'Satoshi', sans-serif;
 }
 #carousel{
     max-height: 500px;

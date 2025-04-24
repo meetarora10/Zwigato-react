@@ -4,17 +4,10 @@ import './style.css'
 import { Link } from 'react-scroll'
 const Navb = () => {
   return (
-    // <div>
-    //     <ul type="none" className='nav'>
-    //         <li><NavLink to="/">Home</NavLink></li>
-    //         <li><NavLink to="/about">About</NavLink></li>
-    //         <li><NavLink to="/contact">Contact</NavLink></li>
-    //     </ul>
-    // </div>
     <>
       <nav className="navbar navbar-expand-lg navbar-dark bg-success">
         <div className="container-fluid">
-          <NavLink className="navbar-brand fs-1 fst-italic" to="/" style={{color:'orange',filter:'brightness(100%)'}}>Zwigato</NavLink>
+          <NavLink className="navbar-brand fs-1 fst-italic" to="/" style={{color:'orange',filter:'brightness(100%)',fontFamily:'Protest Guerrilla,sans-serif'}}>Zwigato</NavLink>
           <button className='navbar-toggler' type='button' data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup">
             <span className='navbar-toggler-icon'></span>
           </button>

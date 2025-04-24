@@ -1,86 +1,143 @@
-import React, { useEffect, useState } from 'react'
-import './style.css'
-import Header from './Header';
-import Table from 'react-bootstrap/Table';
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { RiDeleteBin7Line } from "react-icons/ri";
-import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
-import { REMOVE,ADD,DLT } from '../redux/actions/action'
+import { REMOVE, ADD, DLT } from '../redux/actions/action';
+import Header from './Header';
+
 const CardDetails = () => {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // console.log(data);
   const { id } = useParams();
+  
   const getdata = useSelector((state) => state.cartreducer.carts);
-  const compareId = () => {
-    let compareData = getdata.filter((el) => {
-      return el.id == id
-    });
-    setData(compareData);
-  }
-  const send = (el) => {
-    console.log("Hello")
-    dispatch(ADD(el));
-  }
-  const remove = (id) => {
-    dispatch(REMOVE(id));
-    navigate('/order');
-  }
-  const dlt = (item) => {
-    dispatch(DLT(item));
-  }
+  
   useEffect(() => {
-    compareId();
-  }, [id])
+    // Filter data based on ID from URL params
+    const compareData = getdata.filter((el) => el.id == id);
+    setData(compareData);
+  }, [id, getdata]);
+  
+  const incrementQuantity = (item) => {
+    dispatch(ADD(item));
+  };
+  
+  const decrementQuantity = (item) => {
+    if (item.qnty <= 1) {
+      removeItem(item.id);
+    } else {
+      dispatch(DLT(item));
+    }
+  };
+  
+  const removeItem = (itemId) => {
+    dispatch(REMOVE(itemId));
+    navigate('/order');
+  };
+  
   return (
-    <>
+    <div className="min-h-screen bg-white">
       <Header />
-      <div className='container mt-2' style={{ color: 'black',boxShadow:'0px 1px 1px solid black' }}>
-        <h2 className='text-center' style={{fontFamily:'Montserrat'}}>Item Details : </h2>
-        <section className="container2 mt-2">
-          <div className="details">
-            {
-              data.map((e) => {
-                return (
-                  <>
-                    <div className="itemsImg">
-                      <img src={e.imgdata} alt="" srcset="" />
-                    </div>
-                    <div className="table">
-                      <Table>
-                        <tr>
-                          <td>
-                            <p><strong>Restaurant Name : </strong>{e.rname}</p>
-                            <p><strong>Price : </strong>₹ {e.price}</p>
-                            <p><strong>Dishes : </strong>{e.address}</p>
-                            <p><strong>Total : </strong>₹ {e.price*e.qnty}</p>
-                            <div className="mt-3 d-flex justify-content-evenly align-items-center" style={{cursor:'pointer',backgroundColor:'grey',width:'75px'}}>
-                              <button style={{width:'55px',border:'none',fontSize:'20px'}} onClick={e.qnty <=1 ? ()=>remove(e.id) : ()=>dlt(e)}>-</button>
-                              <span style={{fontSize:'20px',margin:'0px 4px 0px 4px'}}>{e.qnty}</span>
-                              <button style={{width:'55px',border:'none',fontSize:'20px'}} onClick={()=>send(e)}>+</button>
-                            </div>
-                          </td>
-                          <td>
-                            <p><strong>Rating : </strong><span style={{ backgroundColor: 'green', borderRadius: '6px' }}> {e.rating} ★</span></p>
-                            <p><strong>Review : </strong>{e.somedata}</p>
-                            <p><strong>Remove : </strong><RiDeleteBin7Line color='red' fontSize='24px' cursor='pointer' onClick={() => remove(e.id)} /></p>
-                          </td>
-                        </tr>
-
-                      </Table>
-                    </div>
-                  </>
-
-                )
-              })
-            }
+      
+      <div className="container mx-auto px-4 py-6 text-black">
+        <h2 className="text-2xl md:text-3xl font-bold text-center text-gray-800 font-montserrat mb-6">
+          Item Details
+        </h2>
+        
+        {data.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-lg text-gray-600">No item found</p>
           </div>
-        </section>
+        ) : (
+          data.map((item) => (
+            <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden max-w-4xl mx-auto">
+              <div className="flex flex-col md:flex-row">
+                {/* Image Section */}
+                <div className="md:w-1/2">
+                  <img 
+                    src={item.imgdata} 
+                    alt={item.rname} 
+                    className="w-full h-64 md:h-full object-cover"
+                  />
+                </div>
+                
+                {/* Details Section */}
+                <div className="md:w-1/2 p-6">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {/* Left Column */}
+                    <div>
+                      <div className="mb-4">
+                        <p className="font-semibold text-gray-700">Restaurant Name:</p>
+                        <p className="text-lg">{item.rname}</p>
+                      </div>
+                      
+                      <div className="mb-4">
+                        <p className="font-semibold text-gray-700">Price:</p>
+                        <p className="text-lg">₹ {item.price}</p>
+                      </div>
+                      
+                      <div className="mb-4">
+                        <p className="font-semibold text-gray-700">Dishes:</p>
+                        <p className="text-lg">{item.address}</p>
+                      </div>
+                      
+                      <div className="mb-4">
+                        <p className="font-semibold text-gray-700">Total:</p>
+                        <p className="text-lg font-bold">₹ {item.price * item.qnty}</p>
+                      </div>
+                      
+                      <div className="flex items-center">
+                        <p className="font-semibold text-gray-700 mr-3">Quantity:</p>
+                        <div className="flex items-center bg-gray-200 rounded-md">
+                          <button 
+                            onClick={() => decrementQuantity(item)}
+                            className="px-3 py-1 text-xl font-medium hover:bg-gray-300 rounded-l-md transition-colors"
+                          >
+                            -
+                          </button>
+                          <span className="px-3 py-1 text-lg font-medium">{item.qnty}</span>
+                          <button 
+                            onClick={() => incrementQuantity(item)}
+                            className="px-3 py-1 text-xl font-medium hover:bg-gray-300 rounded-r-md transition-colors"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Right Column */}
+                    <div>
+                      <div className="mb-4">
+                        <p className="font-semibold text-gray-700">Rating:</p>
+                        <span className="bg-green-600 text-white px-2 py-1 rounded-md">
+                          {item.rating} ★
+                        </span>
+                      </div>
+                      
+                      <div className="mb-4">
+                        <p className="font-semibold text-gray-700">Review:</p>
+                        <p className="text-lg">{item.somedata}</p>
+                      </div>
+                      
+                      <button
+                        onClick={() => removeItem(item.id)}
+                        className="mt-4 flex items-center text-red-600 hover:text-red-800 transition-colors"
+                      >
+                        <RiDeleteBin7Line className="text-2xl mr-2" />
+                        <span className="font-medium">Remove Item</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
       </div>
-    </>
+    </div>
+  );
+};
 
-  )
-}
-export default CardDetails
+export default CardDetails;
